@@ -1,0 +1,13 @@
+alias ls='ls --color=always -rthla'
+alias sandwich='sudo $(history -p \!\!)'
+alias bricks='seq -ws "___|" 99|fold -69|tr "0-9" "_"'
+alias wireless='ip -o addr show | grep inet\ | grep wlan | cut -d " " -f 7'
+alias wired='ip -o addr show | grep inet\ | grep eth0 | cut -d " " -f 7'
+function apt-updater {
+	apt-get update &&
+	apt-get dist-upgrade -Vy &&
+	apt-get autoremove -y &&
+	apt-get autoclean &&
+	apt-get clean &&
+	reboot
+}
