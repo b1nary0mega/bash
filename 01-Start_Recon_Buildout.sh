@@ -7,10 +7,10 @@
 ### do recon.                                                          ###
 ##########################################################################
 
-fileName="nmap_scan.txt"
-folderName="machines"
 network="192.168.0.1-254"
 topXports=5
+fileName="nmap_scan-$network.txt"
+folderName="machines"
 
 # provide help menu when no cmd vars used
 if [ -z "$1" ]; then
@@ -27,11 +27,11 @@ network=$1
 printf '...running scan for top %s ports in network %s...\n' $topXports $network
 nmap -sT -A --top-ports=$topXports $network -oG $fileName
 
-# create directory for output
+# make the directory
 printf '...making %s directory...\n' $folderName
 mkdir $folderName
 
-#echo out the contents of scan for each machine, to it's own file
+#create a file for each machine, with it's scan results
 printf '...grepping out all the juicy bits to their respective file(s)...\n'
 for machine in $(cat $fileName | grep Up | cut -d" " -f2); do 
   grep "$machine " $fileName > ./$folderName/$machine
