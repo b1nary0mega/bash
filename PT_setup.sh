@@ -21,7 +21,7 @@ NC='\033[0m'
 ######################
 
 # Update System
-echo -e "${BLUE}Updating Kali.${NC}"
+echo -e "${BLUE}Updating OS.${NC}"
 apt update ; apt -y upgrade ; apt -y dist-upgrade ; apt -y autoremove ; apt -y autoclean ; updatedb
 echo
 
@@ -33,25 +33,47 @@ echo
 ### CONFIGURATION ###
 #####################
 
+# Create new NON-ROOT user account
+echo -e "${BLUE}Creating non-root user.${NC}"
+echo -e "${YELLOW}Please enter account name: ${NC}"
+read newbie
+useradd -m $newbie
+passwd $newbie
+usermod -a -G sudo $newbie
+chsh -s /bin/bash $newbie
+echo -e "${BLUE}New account created.${NC}"
+echo
+
 # SSH Persistence
-echo -e "${BLUE}Making SSH Persistent.${NC}"
-systemctl enable ssh
+echo -e "${BLUE}Making SSH persistent.${NC}"
+sudo systemctl enable ssh
 echo
 
 # MSF
-echo -e "${BLUE}Setting up MSF.${NC}"
-apt install postgresql
+echo -e "${BLUE}Installing Postgresql.${NC}"
+sudo apt install postgresql
 echo
-systemctl enable postgresql
-msfdb init
-msfdb start
+sudo systemctl enable postgresql
+echo
+
+echo -e "${BLUE}Installing MSF.${NC}"
+cd /tmp
+sudo -H -u $newbie curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall
+chmod +x msfinstall
+echo
+
+echo -e "${BLUE}Setting up MSF as non-root user.${NC}"
+sudo -H -u $newbie ./msfinstall
+sudo -H -u $newbie msfdb init
+sudo -H -u $newbie msfdb start
+sudo -H -u $newbie msfupdate
 echo
 
 # RDP
 echo -e "${BLUE}Setting up RDP.${NC}"
-apt install xrdp -y
-systemctl enable xrdp
-systemctl start xrdp
+sudo apt install xrdp -y
+sudo systemctl enable xrdp
+sudo systemctl start xrdp
 echo
 
 ######################
@@ -60,27 +82,34 @@ echo
 
 # Sublime
 echo -e "${BLUE}Installing Sublime Text.${NC}"
-apt install dirmngr gnupg apt-transport-https ca-certificates software-properties-common
+sudo apt install dirmngr gnupg apt-transport-https ca-certificates software-properties-common
 curl -fsSL https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
-add-apt-repository "deb https://download.sublimetext.com/ apt/stable/"
-apt install sublime-text -y
+sudo add-apt-repository "deb https://download.sublimetext.com/ apt/stable/"
+sudo apt install sublime-text -y
 echo
 
 # Dos2Unix
 echo -e "${YELLOW}Installing Dos2Unix.${NC}"
-apt install dos2unix -y
+sudo apt install dos2unix -y
 echo
 
 # XML Tools
 if [ ! -f /usr/bin/xlsx2csv ]; then
      echo -e "${YELLOW}Installing xlsx2csv.${NC}"
-     apt-get install -y xlsx2csv
+     sudo apt install -y xlsx2csv
      echo
 fi
 
 if [ ! -f /usr/bin/xml_grep ]; then
      echo -e "${YELLOW}Installing xml_grep.${NC}"
-     apt-get install -y xml-twig-tools
+     sudo apt install -y xml-twig-tools
+     echo
+fi
+
+# NSLookup
+if [ ! -f /usr/bin/nslookup ]; then
+     echo -e "${YELLOW}Installing DNS Tools.${NC}"
+     sudo apt install -y dnstools
      echo
 fi
 
@@ -91,13 +120,13 @@ if [ -d /opt/discover ]; then
 	echo
 else
 	echo -e "${YELLOW}Installing Discover.${NC}"
-        git clone https://github.com/leebaird/discover.git /opt/discover
-        echo
+     git clone https://github.com/leebaird/discover.git /opt/discover
+     echo
 fi
 
 # NMap Scripts
 echo -e "${BLUE}Updating Nmap scripts.${NC}"
-nmap --script-updatedb | egrep -v '(Starting|seconds)' | sed 's/NSE: //'
+sudo nmap --script-updatedb | egrep -v '(Starting|seconds)' | sed 's/NSE: //'
 echo
 
 # SecLists
@@ -163,13 +192,13 @@ else
      echo -e "${YELLOW}Installing EyeWitness.${NC}"
      git clone https://github.com/ChrisTruncer/EyeWitness.git /opt/EyeWitness
      cd /opt/EyeWitness/Python/setup/
-     ./setup.sh
+     sudo ./setup.sh
      echo
 fi
 
 # Swaks
 echo -e "${YELLOW}Installing Swaks.${NC}"
-apt install swaks -y
+sudo apt install swaks -y
 echo
 
 # Impacket
@@ -181,8 +210,8 @@ else
      echo -e "${YELLOW}Installing Impacket.${NC}"
      git clone https://github.com/SecureAuthCorp/impacket.git /opt/Impacket
      cd /opt/Impacket/
-     pip install .
-     ./setup.sh
+     sudo pip install .
+     sudo ./setup.sh
      echo
 fi
 
@@ -191,7 +220,7 @@ fi
 ####################
 # Update DB
 echo -e "${BLUE}Updating locate.${NC}"
-updatedb
+sudo updatedb
 echo
 
 echo
