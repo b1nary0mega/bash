@@ -33,6 +33,25 @@ echo
 ### CONFIGURATION ###
 #####################
 
+# SSH
+echo -e "${BLUE}Making SSH persistent.${NC}"
+sudo systemctl enable ssh
+echo
+
+# RDP
+echo -e "${BLUE}Setting up RDP.${NC}"
+sudo apt install xrdp -y
+sudo systemctl enable xrdp
+sudo systemctl start xrdp
+echo
+
+# Postgresql
+echo -e "${BLUE}Installing Postgresql.${NC}"
+sudo apt install postgresql
+echo
+sudo systemctl enable postgresql
+echo
+
 # Create new NON-ROOT user account
 #echo -e "${BLUE}Creating non-root user.${NC}"
 #echo -e "${YELLOW}Please enter account name: ${NC}"
@@ -43,18 +62,6 @@ echo
 #chsh -s /bin/bash $newbie
 #echo -e "${BLUE}New account created.${NC}"
 #echo
-
-# SSH Persistence
-echo -e "${BLUE}Making SSH persistent.${NC}"
-sudo systemctl enable ssh
-echo
-
-# Postgresql Install
-echo -e "${BLUE}Installing Postgresql.${NC}"
-sudo apt install postgresql
-echo
-sudo systemctl enable postgresql
-echo
 
 # MSF
 #echo -e "${BLUE}Installing MSF.${NC}"
@@ -68,13 +75,6 @@ echo
 #sudo -H -u $newbie msfdb start
 #sudo -H -u $newbie msfupdate
 #echo
-
-# RDP
-echo -e "${BLUE}Setting up RDP.${NC}"
-sudo apt install xrdp -y
-sudo systemctl enable xrdp
-sudo systemctl start xrdp
-echo
 
 ######################
 # INSTALLS & UPDATES #
