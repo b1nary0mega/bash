@@ -34,40 +34,40 @@ echo
 #####################
 
 # Create new NON-ROOT user account
-echo -e "${BLUE}Creating non-root user.${NC}"
-echo -e "${YELLOW}Please enter account name: ${NC}"
-read newbie
-useradd -m $newbie
-passwd $newbie
-usermod -a -G sudo $newbie
-chsh -s /bin/bash $newbie
-echo -e "${BLUE}New account created.${NC}"
-echo
+#echo -e "${BLUE}Creating non-root user.${NC}"
+#echo -e "${YELLOW}Please enter account name: ${NC}"
+#read newbie
+#useradd -m $newbie
+#passwd $newbie
+#usermod -a -G sudo $newbie
+#chsh -s /bin/bash $newbie
+#echo -e "${BLUE}New account created.${NC}"
+#echo
 
 # SSH Persistence
 echo -e "${BLUE}Making SSH persistent.${NC}"
 sudo systemctl enable ssh
 echo
 
-# MSF
+# Postgresql Install
 echo -e "${BLUE}Installing Postgresql.${NC}"
 sudo apt install postgresql
 echo
 sudo systemctl enable postgresql
 echo
 
-echo -e "${BLUE}Installing MSF.${NC}"
-cd /tmp
-sudo -H -u $newbie curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall
-chmod +x msfinstall
-echo
-
-echo -e "${BLUE}Setting up MSF as non-root user.${NC}"
-sudo -H -u $newbie ./msfinstall
-sudo -H -u $newbie msfdb init
-sudo -H -u $newbie msfdb start
-sudo -H -u $newbie msfupdate
-echo
+# MSF
+#echo -e "${BLUE}Installing MSF.${NC}"
+#cd /tmp
+#sudo -H -u $newbie curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall
+#chmod +x msfinstall
+#echo
+#echo -e "${BLUE}Setting up MSF as non-root user.${NC}"
+#sudo -H -u $newbie ./msfinstall
+#sudo -H -u $newbie msfdb init
+#sudo -H -u $newbie msfdb start
+#sudo -H -u $newbie msfupdate
+#echo
 
 # RDP
 echo -e "${BLUE}Setting up RDP.${NC}"
@@ -182,6 +182,18 @@ if [ -d /opt/Cobalt-Strike ]; then
           echo
      fi
 fi
+
+# Chromium
+echo -e "${BLUE}Installing Chromium Text.${NC}"
+sudo apt install chromium -y
+echo
+
+# Scrying
+echo -e "${BLUE}Installing Scrying.${NC}"
+cd ~/
+wget https://github.com/nccgroup/scrying/releases/download/v0.8.2/scrying_0.8.2_amd64.deb
+sudo dpkg -i scrying_0.8.2_amd64.deb
+echo
 
 # EyeWitness
 if [ -d /opt/EyeWitness/.git ]; then
